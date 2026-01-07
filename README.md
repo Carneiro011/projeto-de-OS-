@@ -1,1 +1,1 @@
-sistema de oredem de sevicos
+sistema de ordem de sevicos
