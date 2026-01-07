@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Comunicação - Sistema de Gestão{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-megaphone"></i> Dashboard de Comunicação</h2>
+        <p class="text-muted">Gerenciamento de briefings e solicitações</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">
+            <i class="bi bi-file-earmark-text" style="font-size: 2rem;"></i>
+            <h3>{{ briefings|selectattr('status', 'equalto', 'Recebido')|list|length }}</h3>
+            <p>Briefings Recebidos</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+            <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+            <h3>{{ briefings|selectattr('status', 'equalto', 'Em Produção')|list|length }}</h3>
+            <p>Em Produção</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #218838 100%);">
+            <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+            <h3>{{ briefings|selectattr('status', 'equalto', 'Concluído')|list|length }}</h3>
+            <p>Concluídos</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-list-ul"></i> Briefings Recentes</span>
+                <a href="{{ url_for('briefing_novo') }}" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus-circle"></i> Novo Briefing
+                </a>
+            </div>
+            <div class="card-body">
+                {% if briefings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Secretaria</th>
+                                <th>Responsável</th>
+                                <th>Ação/Evento</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for briefing in briefings[:15] %}
+                            <tr>
+                                <td><strong>#{{ briefing.id }}</strong></td>
+                                <td>{{ briefing.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ briefing.secretaria_responsavel }}</td>
+                                <td>{{ briefing.responsavel_evento }}</td>
+                                <td>{{ briefing.acao_evento[:50] }}{% if briefing.acao_evento|length > 50 %}...{% endif %}</td>
+                                <td>
+                                    {% if briefing.status == 'Recebido' %}
+                                        <span class="status-badge bg-info">{{ briefing.status }}</span>
+                                    {% elif briefing.status == 'Em Produção' %}
+                                        <span class="status-badge bg-warning text-dark">{{ briefing.status }}</span>
+                                    {% elif briefing.status == 'Concluído' %}
+                                        <span class="status-badge bg-success">{{ briefing.status }}</span>
+                                    {% else %}
+                                        <span class="status-badge bg-secondary">{{ briefing.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('briefing_ver', id=briefing.id) }}" class="btn btn-sm btn-primary" title="Ver detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% if current_user.perfil == 'admin' %}
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                            <i class="bi bi-gear"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ url_for('briefing_status', id=briefing.id, status='Recebido') }}">
+                                                <i class="bi bi-inbox"></i> Recebido
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('briefing_status', id=briefing.id, status='Em Produção') }}">
+                                                <i class="bi bi-hourglass-split"></i> Em Produção
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('briefing_status', id=briefing.id, status='Concluído') }}">
+                                                <i class="bi bi-check-circle"></i> Concluído
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('briefing_lista') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-list-ul"></i> Ver Todos os Briefings
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-3">Nenhum briefing cadastrado</p>
+                    <a href="{{ url_for('briefing_novo') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Criar Primeiro Briefing
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> 
+            <strong>Dica:</strong> Os briefings são solicitações de materiais e serviços de comunicação. 
+            Preencha todos os campos com o máximo de detalhes para agilizar a produção.
+        </div>
+    </div>
+</div>
+{% endblock %}

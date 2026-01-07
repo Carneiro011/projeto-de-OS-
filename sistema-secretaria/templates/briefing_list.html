@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Briefings{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><i class="bi bi-file-text"></i> Briefings de Comunicação</h2>
+            <div>
+                <a href="{{ url_for('dashboard_comunicacao') }}" class="btn btn-secondary me-2">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a href="{{ url_for('briefing_novo') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Novo Briefing
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if briefings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Secretaria</th>
+                                <th>Responsável</th>
+                                <th>Ação/Evento</th>
+                                <th>Contato</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for briefing in briefings %}
+                            <tr>
+                                <td><strong>#{{ briefing.id }}</strong></td>
+                                <td>
+                                    <small>{{ briefing.data_criacao.strftime('%d/%m/%Y') }}</small><br>
+                                    <small class="text-muted">{{ briefing.data_criacao.strftime('%H:%M') }}</small>
+                                </td>
+                                <td>{{ briefing.secretaria_responsavel }}</td>
+                                <td>{{ briefing.responsavel_evento }}</td>
+                                <td>
+                                    {% if briefing.acao_evento %}
+                                        {{ briefing.acao_evento[:60] }}{% if briefing.acao_evento|length > 60 %}...{% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ briefing.contato_whats }}</td>
+                                <td>
+                                    {% if briefing.status == 'Recebido' %}
+                                        <span class="status-badge bg-info">{{ briefing.status }}</span>
+                                    {% elif briefing.status == 'Em Produção' %}
+                                        <span class="status-badge bg-warning text-dark">{{ briefing.status }}</span>
+                                    {% elif briefing.status == 'Concluído' %}
+                                        <span class="status-badge bg-success">{{ briefing.status }}</span>
+                                    {% else %}
+                                        <span class="status-badge bg-secondary">{{ briefing.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('briefing_ver', id=briefing.id) }}" class="btn btn-sm btn-primary" title="Ver detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    
+                                    {% if current_user.perfil == 'admin' %}
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" 
+                                                data-bs-toggle="dropdown" title="Alterar status">
+                                            <i class="bi bi-gear"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ url_for('briefing_status', id=briefing.id, status='Recebido') }}">
+                                                <i class="bi bi-inbox"></i> Recebido
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('briefing_status', id=briefing.id, status='Em Produção') }}">
+                                                <i class="bi bi-hourglass-split"></i> Em Produção
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('briefing_status', id=briefing.id, status='Concluído') }}">
+                                                <i class="bi bi-check-circle"></i> Concluído
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-3">Nenhum briefing cadastrado</p>
+                    <a href="{{ url_for('briefing_novo') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Criar Primeiro Briefing
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

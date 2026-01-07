@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Notificar Técnicos - OS #{{ os.id }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-whatsapp text-success"></i> Notificar Técnicos - OS #{{ os.id }}</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-people"></i> Enviar para Grupo do WhatsApp
+            </div>
+            <div class="card-body">
+                <p><strong>Opção recomendada!</strong> Envie uma mensagem completa para o grupo de técnicos.</p>
+                <div class="alert alert-info">
+                    <small>
+                        <i class="bi bi-info-circle"></i>
+                        A mensagem incluirá todos os dados da OS e o link de aceite. 
+                        O primeiro técnico que clicar no link ficará responsável.
+                    </small>
+                </div>
+                <div class="d-grid">
+                    <a href="{{ link_grupo }}" target="_blank" class="btn btn-success btn-lg">
+                        <i class="bi bi-whatsapp"></i> Enviar para Grupo
+                    </a>
+                </div>
+                <hr>
+                <details class="mt-3">
+                    <summary class="btn btn-sm btn-outline-secondary w-100">
+                        <i class="bi bi-eye"></i> Visualizar Mensagem
+                    </summary>
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <pre style="white-space: pre-wrap; font-size: 0.85rem;">{{ mensagem_grupo }}</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Informações da OS
+            </div>
+            <div class="card-body">
+                <p><strong>OS:</strong> #{{ os.id }}</p>
+                <p><strong>Unidade:</strong> {{ os.unidade_origem }}</p>
+                <p><strong>Equipamento:</strong> {{ os.tipo_equipamento }}</p>
+                <p><strong>Local:</strong> {{ os.local_prestacao }}</p>
+                <p><strong>Descrição:</strong><br>{{ os.descricao_servicos }}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-link-45deg"></i> Link de Aceite
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" class="form-control" value="{{ link_aceite }}" id="linkAceite" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copiarLink()">
+                        <i class="bi bi-clipboard"></i> Copiar
+                    </button>
+                </div>
+                <small class="text-muted">Este link permite que o técnico aceite a OS diretamente</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-person"></i> Enviar Individualmente
+            </div>
+            <div class="card-body">
+                {% if links_whatsapp %}
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle"></i> 
+                        Encontrados <strong>{{ links_whatsapp|length }}</strong> técnico(s) com WhatsApp cadastrado.
+                        Clique em "Enviar" para notificar cada um:
+                    </p>
+                    <div class="list-group">
+                        {% for item in links_whatsapp %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ item.tecnico }}</h6>
+                                    <small class="text-muted">
+                                        <i class="bi bi-telephone"></i> {{ item.whatsapp }}
+                                        {% if item.whatsapp_limpo %}
+                                        <span class="badge bg-secondary">{{ item.whatsapp_limpo }}</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <a href="{{ item.link }}" target="_blank" class="btn btn-success">
+                                    <i class="bi bi-whatsapp"></i> Enviar
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Nenhum técnico com WhatsApp cadastrado. Configure os números no gerenciamento de usuários.
+                    </div>
+                {% endif %}
+                
+                <hr>
+                
+                <div class="d-grid">
+                    <a href="{{ url_for('os_lista') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Lista de OS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copiarLink() {
+    const input = document.getElementById('linkAceite');
+    input.select();
+    document.execCommand('copy');
+    alert('Link copiado para a área de transferência!');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{% if usuario %}Editar{% else %}Novo{% endif %} Usuário{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-person-{% if usuario %}gear{% else %}plus{% endif %}"></i> 
+                    {% if usuario %}Editar Usuário{% else %}Novo Usuário{% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{% if usuario %}{{ url_for('usuario_editar', id=usuario.id) }}{% else %}{{ url_for('usuario_novo') }}{% endif %}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Nome de Usuário *</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="{% if usuario %}{{ usuario.username }}{% endif %}" 
+                                   {% if usuario %}readonly{% else %}required{% endif %}>
+                            {% if usuario %}
+                            <small class="text-muted">O nome de usuário não pode ser alterado</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="nome_completo" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="nome_completo" name="nome_completo" 
+                                   value="{% if usuario %}{{ usuario.nome_completo }}{% endif %}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="perfil" class="form-label">Perfil *</label>
+                            <select class="form-select" id="perfil" name="perfil" required>
+                                <option value="admin" {% if usuario and usuario.perfil == 'admin' %}selected{% endif %}>Administrador</option>
+                                <option value="tecnico" {% if usuario and usuario.perfil == 'tecnico' %}selected{% endif %}>Técnico</option>
+                                <option value="comunicacao" {% if usuario and usuario.perfil == 'comunicacao' %}selected{% endif %}>Comunicação</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="whatsapp" class="form-label">WhatsApp</label>
+                            <input type="text" class="form-control" id="whatsapp" name="whatsapp" 
+                                   value="{% if usuario %}{{ usuario.whatsapp }}{% endif %}" 
+                                   placeholder="(XX) XXXXX-XXXX">
+                            <small class="text-muted">Necessário para notificações de OS</small>
+                        </div>
+                    </div>
+                    
+                    {% if usuario %}
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="ativo" name="ativo" 
+                                   {% if usuario.ativo %}checked{% endif %}>
+                            <label class="form-check-label" for="ativo">
+                                Usuário Ativo
+                            </label>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            {% if usuario %}Nova Senha (deixe em branco para manter a atual){% else %}Senha *{% endif %}
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               {% if not usuario %}required{% endif %}>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('usuarios_lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> {% if usuario %}Atualizar{% else %}Criar{% endif %} Usuário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}{% if os %}Editar{% else %}Nova{% endif %} Ordem de Serviço{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="bi bi-{% if os %}pencil-square{% else %}plus-circle{% endif %}"></i>
+                {% if os %}Editar Ordem de Serviço #{{ os.id }}{% else %}Nova Ordem de Serviço{% endif %}
+            </h2>
+            <a href="{{ url_for('os_lista') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="data_abertura" class="form-label">Data de Abertura</label>
+                            <input type="date" class="form-control" id="data_abertura" name="data_abertura" 
+                                   value="{% if os %}{{ os.data_abertura }}{% else %}{{ hoje }}{% endif %}"
+                                   {% if current_user.perfil != 'admin' %}disabled{% endif %}>
+                        </div>
+                        
+                        {% if current_user.perfil == 'admin' and os %}
+                        <div class="col-md-3 mb-3">
+                            <label for="prazo_limite" class="form-label">Prazo Limite</label>
+                            <input type="date" class="form-control" id="prazo_limite" name="prazo_limite" 
+                                   value="{% if os and os.prazo_limite %}{{ os.prazo_limite }}{% endif %}">
+                        </div>
+                        {% endif %}
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="status" class="form-label">Status *</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Aguardando Técnico" {% if not os or os.status == 'Aguardando Técnico' %}selected{% endif %}>Aguardando Técnico</option>
+                                <option value="Andamento" {% if os and os.status == 'Andamento' %}selected{% endif %}>Andamento</option>
+                                <option value="Aguardando Peça" {% if os and os.status == 'Aguardando Peça' %}selected{% endif %}>Aguardando Peça</option>
+                                <option value="Aprovado/Pronto" {% if os and os.status == 'Aprovado/Pronto' %}selected{% endif %}>Aprovado/Pronto</option>
+                                <option value="Sem Conserto" {% if os and os.status == 'Sem Conserto' %}selected{% endif %}>Sem Conserto</option>
+                            </select>
+                            {% if not os %}
+                            <small class="text-muted">Nova OS aguarda técnico aceitar</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="tecnico_responsavel" class="form-label">Técnico Responsável</label>
+                            <input type="text" class="form-control" value="{% if os and os.tecnico_responsavel %}{{ os.tecnico_responsavel }}{% else %}Aguardando aceite{% endif %}" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="unidade_origem" class="form-label">Unidade de Origem *</label>
+                            <input type="text" class="form-control" id="unidade_origem" name="unidade_origem" 
+                                   value="{% if os %}{{ os.unidade_origem }}{% endif %}" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="local_prestacao" class="form-label">Local de Prestação do Serviço *</label>
+                            <input type="text" class="form-control" id="local_prestacao" name="local_prestacao" 
+                                   value="{% if os %}{{ os.local_prestacao }}{% endif %}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="tipo_equipamento" class="form-label">Tipo de Equipamento *</label>
+                            <select class="form-select" id="tipo_equipamento" name="tipo_equipamento" required>
+                                <option value="">Selecione...</option>
+                                <option value="Computador" {% if os and os.tipo_equipamento == 'Computador' %}selected{% endif %}>Computador</option>
+                                <option value="Notebook" {% if os and os.tipo_equipamento == 'Notebook' %}selected{% endif %}>Notebook</option>
+                                <option value="Impressora" {% if os and os.tipo_equipamento == 'Impressora' %}selected{% endif %}>Impressora</option>
+                                <option value="Scanner" {% if os and os.tipo_equipamento == 'Scanner' %}selected{% endif %}>Scanner</option>
+                                <option value="Roteador/Switch" {% if os and os.tipo_equipamento == 'Roteador/Switch' %}selected{% endif %}>Roteador/Switch</option>
+                                <option value="Servidor" {% if os and os.tipo_equipamento == 'Servidor' %}selected{% endif %}>Servidor</option>
+                                <option value="Nobreak" {% if os and os.tipo_equipamento == 'Nobreak' %}selected{% endif %}>Nobreak</option>
+                                <option value="Câmera" {% if os and os.tipo_equipamento == 'Câmera' %}selected{% endif %}>Câmera</option>
+                                <option value="Telefone IP" {% if os and os.tipo_equipamento == 'Telefone IP' %}selected{% endif %}>Telefone IP</option>
+                                <option value="Outro" {% if os and os.tipo_equipamento == 'Outro' %}selected{% endif %}>Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="entregue_por" class="form-label">Entregue Por</label>
+                            <input type="text" class="form-control" id="entregue_por" name="entregue_por" 
+                                   value="{% if os %}{{ os.entregue_por }}{% endif %}">
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="recebido_por" class="form-label">Recebido Por</label>
+                            <input type="text" class="form-control" id="recebido_por" name="recebido_por" 
+                                   value="{% if os %}{{ os.recebido_por }}{% endif %}">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="retirado_por" class="form-label">Retirado Por</label>
+                            <input type="text" class="form-control" id="retirado_por" name="retirado_por" 
+                                   value="{% if os %}{{ os.retirado_por }}{% endif %}">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3" id="data_solucao_field" style="display: none;">
+                            <label for="data_solucao" class="form-label">Data de Solução</label>
+                            <input type="date" class="form-control" id="data_solucao" name="data_solucao" 
+                                   value="{% if os and os.data_solucao %}{{ os.data_solucao }}{% endif %}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricao_servicos" class="form-label">Descrição dos Serviços *</label>
+                        <textarea class="form-control" id="descricao_servicos" name="descricao_servicos" rows="4" required>{% if os %}{{ os.descricao_servicos }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{% if os %}{{ os.observacoes }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> {% if os %}Atualizar{% else %}Criar{% endif %} OS
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Mostrar campo de data de solução apenas se status for Aprovado/Pronto ou Sem Conserto
+    document.getElementById('status').addEventListener('change', function() {
+        const dataSolucaoField = document.getElementById('data_solucao_field');
+        if (this.value === 'Aprovado/Pronto' || this.value === 'Sem Conserto') {
+            dataSolucaoField.style.display = 'block';
+        } else {
+            dataSolucaoField.style.display = 'none';
+        }
+    });
+    
+    // Verificar no carregamento da página
+    window.addEventListener('DOMContentLoaded', function() {
+        const status = document.getElementById('status').value;
+        const dataSolucaoField = document.getElementById('data_solucao_field');
+        if (status === 'Aprovado/Pronto' || status === 'Sem Conserto') {
+            dataSolucaoField.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

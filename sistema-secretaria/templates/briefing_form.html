@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Briefing de Comunicação{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="bi bi-megaphone"></i> Novo Briefing de Comunicação
+            </h2>
+            <a href="{{ url_for('briefing_lista') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Atenção:</strong> Preencha todos os campos com o máximo de detalhes possível. 
+            Quanto mais completo o briefing, mais rápida e eficiente será a produção do material.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-file-earmark-text"></i> Informações do Briefing
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <h5 class="border-bottom pb-2 mb-3">Informações Básicas</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="secretaria_responsavel" class="form-label">Secretaria Responsável *</label>
+                            <input type="text" class="form-control" id="secretaria_responsavel" 
+                                   name="secretaria_responsavel" required 
+                                   placeholder="Ex: Secretaria de Educação">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="responsavel_evento" class="form-label">Responsável pelo Evento *</label>
+                            <input type="text" class="form-control" id="responsavel_evento" 
+                                   name="responsavel_evento" required 
+                                   placeholder="Nome completo">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="contato_whats" class="form-label">Contato WhatsApp *</label>
+                            <input type="tel" class="form-control" id="contato_whats" 
+                                   name="contato_whats" required 
+                                   placeholder="(XX) XXXXX-XXXX">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="qtd_beneficiados" class="form-label">Quantidade de Beneficiados</label>
+                            <input type="text" class="form-control" id="qtd_beneficiados" 
+                                   name="qtd_beneficiados" 
+                                   placeholder="Ex: 500 pessoas">
+                        </div>
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Descrição do Evento</h5>
+                    
+                    <div class="mb-3">
+                        <label for="acao_evento" class="form-label">Qual ação comunicar?</label>
+                        <textarea class="form-control" id="acao_evento" name="acao_evento" rows="3" 
+                                  placeholder="Descreva brevemente qual ação ou evento será comunicado"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="data_hora_local" class="form-label">Data, Hora e Local</label>
+                        <textarea class="form-control" id="data_hora_local" name="data_hora_local" rows="2" 
+                                  placeholder="Ex: 15/02/2024 às 14h na Praça Central"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="autoridades_presentes" class="form-label">Autoridades Presentes</label>
+                        <textarea class="form-control" id="autoridades_presentes" name="autoridades_presentes" rows="2" 
+                                  placeholder="Liste as autoridades que estarão presentes"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="objetivo_principal" class="form-label">Objetivo Principal</label>
+                        <textarea class="form-control" id="objetivo_principal" name="objetivo_principal" rows="3" 
+                                  placeholder="Qual o objetivo principal desta ação/evento?"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricao_acao" class="form-label">Descrição Detalhada da Ação</label>
+                        <textarea class="form-control" id="descricao_acao" name="descricao_acao" rows="4" 
+                                  placeholder="Descreva em detalhes como será a ação, programação, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="parceiros_logos" class="form-label">Parceiros (para inserção de logos)</label>
+                        <textarea class="form-control" id="parceiros_logos" name="parceiros_logos" rows="2" 
+                                  placeholder="Liste os parceiros cujos logos devem aparecer nos materiais"></textarea>
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Solicitações de Produção</h5>
+                    
+                    <div class="mb-3">
+                        <label for="solicitacao_profissionais" class="form-label">Solicitação de Profissionais</label>
+                        <textarea class="form-control" id="solicitacao_profissionais" name="solicitacao_profissionais" rows="2" 
+                                  placeholder="Ex: Fotógrafo, Cinegrafista, Designer, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="meios_digitais" class="form-label">Meios Digitais</label>
+                        <textarea class="form-control" id="meios_digitais" name="meios_digitais" rows="3" 
+                                  placeholder="Ex: Posts para Instagram, Stories, Banners para site, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="meios_impressos" class="form-label">Meios Impressos</label>
+                        <textarea class="form-control" id="meios_impressos" name="meios_impressos" rows="3" 
+                                  placeholder="Ex: Banners, Folders, Cartazes, etc."></textarea>
+                        <div class="alert alert-warning mt-2">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Importante:</strong> Materiais impressos só podem ser solicitados se houver dispensa ou licitação vigente.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="medidas_material" class="form-label">Medidas do Material</label>
+                        <textarea class="form-control" id="medidas_material" name="medidas_material" rows="2" 
+                                  placeholder="Ex: Banner 2x1m, Folder A4, etc."></textarea>
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Anexos</h5>
+                    
+                    <div class="mb-3">
+                        <label for="imagens" class="form-label">Imagens de Alta Qualidade</label>
+                        <input type="file" class="form-control" id="imagens" name="imagens" 
+                               multiple accept="image/*">
+                        <div class="form-text">
+                            <i class="bi bi-info-circle"></i>
+                            Você pode selecionar múltiplas imagens. Formatos aceitos: JPG, PNG, GIF, BMP, TIFF
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Enviar Briefing
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
